@@ -17,6 +17,8 @@ from storage.memory.memory_saver import get_memory_saver
 from tools.health_topic_tool import generate_health_topic
 from tools.health_video_tool import generate_health_video
 from tools.wechat_article_tool import generate_wechat_article
+from tools.health_trends_tool import fetch_health_trends
+from tools.advanced_video_tool import generate_advanced_health_video
 
 LLM_CONFIG = "config/agent_llm_config.json"
 
@@ -58,7 +60,13 @@ def build_agent(ctx=None):
     return create_agent(
         model=llm,
         system_prompt=cfg.get("sp"),
-        tools=[generate_health_topic, generate_health_video, generate_wechat_article],
+        tools=[
+            generate_health_topic,
+            generate_health_video,
+            generate_wechat_article,
+            fetch_health_trends,
+            generate_advanced_health_video
+        ],
         checkpointer=get_memory_saver(),
         state_schema=AgentState,
     )
