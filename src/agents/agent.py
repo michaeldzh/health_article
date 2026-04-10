@@ -19,6 +19,7 @@ from tools.health_video_tool import generate_health_video
 from tools.wechat_article_tool import generate_wechat_article
 from tools.health_trends_tool import fetch_health_trends
 from tools.advanced_video_tool import generate_advanced_health_video
+from tools.video_composite_tool import composite_health_video
 
 LLM_CONFIG = "config/agent_llm_config.json"
 
@@ -65,7 +66,8 @@ def build_agent(ctx=None):
             generate_health_video,
             generate_wechat_article,
             fetch_health_trends,
-            generate_advanced_health_video
+            generate_advanced_health_video,
+            composite_health_video
         ],
         checkpointer=get_memory_saver(),
         state_schema=AgentState,

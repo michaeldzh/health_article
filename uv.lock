@@ -425,6 +425,15 @@ source = { registry = "https://mirrors.aliyun.com/pypi/simple/" }
 sdist = { url = "https://mirrors.aliyun.com/pypi/packages/c1/d3/6be85a9c772d6ebba0cc3ab37390dd6620006dcced758667e0217fb13307/dbus-python-1.3.2.tar.gz", hash = "sha256:ad67819308618b5069537be237f8e68ca1c7fcc95ee4a121fe6845b1418248f8" }
 
 [[package]]
+name = "decorator"
+version = "5.2.1"
+source = { registry = "https://mirrors.aliyun.com/pypi/simple/" }
+sdist = { url = "https://mirrors.aliyun.com/pypi/packages/43/fa/6d96a0978d19e17b68d634497769987b16c8f4cd0a7a05048bec693caa6b/decorator-5.2.1.tar.gz", hash = "sha256:65f266143752f734b0a7cc83c46f4618af75b8c5911b00ccb61d0ac9b6da0360" }
+wheels = [
+    { url = "https://mirrors.aliyun.com/pypi/packages/4e/8c/f3147f5c4b73e7550fe5f9352eaa956ae838d5c51eb58e7a25b9f3e2643b/decorator-5.2.1-py3-none-any.whl", hash = "sha256:d316bb415a2d9e2d2b3abcc4084c6502fc09240e292cd76a76afc106a1c8e04a" },
+]
+
+[[package]]
 name = "deprecation"
 version = "2.1.0"
 source = { registry = "https://mirrors.aliyun.com/pypi/simple/" }
@@ -613,6 +622,33 @@ source = { registry = "https://mirrors.aliyun.com/pypi/simple/" }
 sdist = { url = "https://mirrors.aliyun.com/pypi/packages/6f/6d/0703ccc57f3a7233505399edb88de3cbd678da106337b9fcde432b65ed60/idna-3.11.tar.gz", hash = "sha256:795dafcc9c04ed0c1fb032c2aa73654d8e8c5023a7df64a53f39190ada629902" }
 wheels = [
     { url = "https://mirrors.aliyun.com/pypi/packages/0e/61/66938bbb5fc52dbdf84594873d5b51fb1f7c7794e9c0f5bd885f30bc507b/idna-3.11-py3-none-any.whl", hash = "sha256:771a87f49d9defaf64091e6e6fe9c18d4833f140bd19464795bc32d966ca37ea" },
+]
+
+[[package]]
+name = "imageio"
+version = "2.37.3"
+source = { registry = "https://mirrors.aliyun.com/pypi/simple/" }
+dependencies = [
+    { name = "numpy" },
+    { name = "pillow" },
+]
+sdist = { url = "https://mirrors.aliyun.com/pypi/packages/b1/84/93bcd1300216ea50811cee96873b84a1bebf8d0489ffaf7f2a3756bab866/imageio-2.37.3.tar.gz", hash = "sha256:bbb37efbfc4c400fcd534b367b91fcd66d5da639aaa138034431a1c5e0a41451" }
+wheels = [
+    { url = "https://mirrors.aliyun.com/pypi/packages/49/fa/391e437a34e55095173dca5f24070d89cbc233ff85bf1c29c93248c6588d/imageio-2.37.3-py3-none-any.whl", hash = "sha256:46f5bb8522cd421c0f5ae104d8268f569d856b29eb1a13b92829d1970f32c9f0" },
+]
+
+[[package]]
+name = "imageio-ffmpeg"
+version = "0.6.0"
+source = { registry = "https://mirrors.aliyun.com/pypi/simple/" }
+sdist = { url = "https://mirrors.aliyun.com/pypi/packages/44/bd/c3343c721f2a1b0c9fc71c1aebf1966a3b7f08c2eea8ed5437a2865611d6/imageio_ffmpeg-0.6.0.tar.gz", hash = "sha256:e2556bed8e005564a9f925bb7afa4002d82770d6b08825078b7697ab88ba1755" }
+wheels = [
+    { url = "https://mirrors.aliyun.com/pypi/packages/da/58/87ef68ac83f4c7690961bce288fd8e382bc5f1513860fc7f90a9c1c1c6bf/imageio_ffmpeg-0.6.0-py3-none-macosx_10_9_intel.macosx_10_9_x86_64.whl", hash = "sha256:9d2baaf867088508d4a3458e61eeb30e945c4ad8016025545f66c4b5aaef0a61" },
+    { url = "https://mirrors.aliyun.com/pypi/packages/40/5c/f3d8a657d362cc93b81aab8feda487317da5b5d31c0e1fdfd5e986e55d17/imageio_ffmpeg-0.6.0-py3-none-macosx_11_0_arm64.whl", hash = "sha256:b1ae3173414b5fc5f538a726c4e48ea97edc0d2cdc11f103afee655c463fa742" },
+    { url = "https://mirrors.aliyun.com/pypi/packages/33/e7/1925bfbc563c39c1d2e82501d8372734a5c725e53ac3b31b4c2d081e895b/imageio_ffmpeg-0.6.0-py3-none-manylinux2014_aarch64.whl", hash = "sha256:1d47bebd83d2c5fc770720d211855f208af8a596c82d17730aa51e815cdee6dc" },
+    { url = "https://mirrors.aliyun.com/pypi/packages/a0/2d/43c8522a2038e9d0e7dbdf3a61195ecc31ca576fb1527a528c877e87d973/imageio_ffmpeg-0.6.0-py3-none-manylinux2014_x86_64.whl", hash = "sha256:c7e46fcec401dd990405049d2e2f475e2b397779df2519b544b8aab515195282" },
+    { url = "https://mirrors.aliyun.com/pypi/packages/a0/13/59da54728351883c3c1d9fca1710ab8eee82c7beba585df8f25ca925f08f/imageio_ffmpeg-0.6.0-py3-none-win32.whl", hash = "sha256:196faa79366b4a82f95c0f4053191d2013f4714a715780f0ad2a68ff37483cc2" },
+    { url = "https://mirrors.aliyun.com/pypi/packages/2c/c6/fa760e12a2483469e2bf5058c5faff664acf66cadb4df2ad6205b016a73d/imageio_ffmpeg-0.6.0-py3-none-win_amd64.whl", hash = "sha256:02fa47c83703c37df6bfe4896aab339013f62bf02c5ebf2dce6da56af04ffc0a" },
 ]
 
 [[package]]
@@ -1149,6 +1185,24 @@ wheels = [
 ]
 
 [[package]]
+name = "moviepy"
+version = "2.2.1"
+source = { registry = "https://mirrors.aliyun.com/pypi/simple/" }
+dependencies = [
+    { name = "decorator" },
+    { name = "imageio" },
+    { name = "imageio-ffmpeg" },
+    { name = "numpy" },
+    { name = "pillow" },
+    { name = "proglog" },
+    { name = "python-dotenv" },
+]
+sdist = { url = "https://mirrors.aliyun.com/pypi/packages/de/61/15f9476e270f64c78a834e7459ca045d669f869cec24eed26807b8cd479d/moviepy-2.2.1.tar.gz", hash = "sha256:c80cb56815ece94e5e3e2d361aa40070eeb30a09d23a24c4e684d03e16deacb1" }
+wheels = [
+    { url = "https://mirrors.aliyun.com/pypi/packages/9a/73/7d3b2010baa0b5eb1e4dfa9e4385e89b6716be76f2fa21a6c0fe34b68e5a/moviepy-2.2.1-py3-none-any.whl", hash = "sha256:6b56803fec2ac54b557404126ac1160e65448e03798fa282bd23e8fab3795060" },
+]
+
+[[package]]
 name = "multidict"
 version = "6.7.1"
 source = { registry = "https://mirrors.aliyun.com/pypi/simple/" }
@@ -1557,6 +1611,18 @@ dependencies = [
 sdist = { url = "https://mirrors.aliyun.com/pypi/packages/b4/6f/1985be8afb32931e9b537ea0a6fedd103ea9dc6b0ac91b6f32702435564a/postgrest-2.27.3.tar.gz", hash = "sha256:c2e2679addfc8eaab23197bad7ddaee6cbb4cbe8c483ebd2d2e5219543037cc3" }
 wheels = [
     { url = "https://mirrors.aliyun.com/pypi/packages/14/ec/7122631cbd28b12b1a61b472ca3e1686ac557c6a478fdeca0f33419e87da/postgrest-2.27.3-py3-none-any.whl", hash = "sha256:ed79123af7127edd78d538bfe8351d277e45b1a36994a4dbf57ae27dde87a7b7" },
+]
+
+[[package]]
+name = "proglog"
+version = "0.1.12"
+source = { registry = "https://mirrors.aliyun.com/pypi/simple/" }
+dependencies = [
+    { name = "tqdm" },
+]
+sdist = { url = "https://mirrors.aliyun.com/pypi/packages/c2/af/c108866c452eda1132f3d6b3cb6be2ae8430c97e9309f38ca9dbd430af37/proglog-0.1.12.tar.gz", hash = "sha256:361ee074721c277b89b75c061336cb8c5f287c92b043efa562ccf7866cda931c" }
+wheels = [
+    { url = "https://mirrors.aliyun.com/pypi/packages/c1/1b/f7ea6cde25621cd9236541c66ff018f4268012a534ec31032bcb187dc5e7/proglog-0.1.12-py3-none-any.whl", hash = "sha256:ccaafce51e80a81c65dc907a460c07ccb8ec1f78dc660cfd8f9ec3a22f01b84c" },
 ]
 
 [[package]]
@@ -2678,6 +2744,7 @@ dependencies = [
     { name = "langgraph-prebuilt" },
     { name = "langgraph-sdk" },
     { name = "langsmith" },
+    { name = "moviepy" },
     { name = "opencv-python" },
     { name = "openpyxl" },
     { name = "pandas" },
@@ -2717,6 +2784,7 @@ requires-dist = [
     { name = "langgraph-prebuilt", specifier = "==1.0.2" },
     { name = "langgraph-sdk", specifier = "==0.2.9" },
     { name = "langsmith", specifier = "==0.4.39" },
+    { name = "moviepy", specifier = ">=2.2.1" },
     { name = "opencv-python", specifier = ">=4.12,<5" },
     { name = "openpyxl", specifier = ">=3.1,<4" },
     { name = "pandas", specifier = ">=2.2,<3" },

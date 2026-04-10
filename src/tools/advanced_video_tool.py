@@ -12,12 +12,13 @@ import json
 
 
 @tool
-def generate_advanced_health_video(topic_data: str) -> str:
+def generate_advanced_health_video(topic_data: str, video_style: str = "温馨") -> str:
     """
     根据养生选题生成高级分镜视频，包含旁白和字幕
 
     Args:
         topic_data: 养生选题的JSON字符串
+        video_style: 视频风格，可选：温馨、专业、活泼、简约（默认：温馨）
 
     Returns:
         返回视频生成结果和分镜信息的JSON字符串
@@ -31,6 +32,39 @@ def generate_advanced_health_video(topic_data: str) -> str:
         title = topic.get("title", "")
         description = topic.get("description", "")
         keywords = topic.get("keywords", [])
+
+        # 定义视频风格特征
+        style_features = {
+            "温馨": {
+                "description": "色调温暖柔和，场景舒适治愈，适合家庭养生、女性健康等主题",
+                "visual_keywords": "暖色调、柔和光线、温馨舒适、治愈感、米白色、柔和棕色",
+                "atmosphere": "温暖、亲切、放松、治愈"
+            },
+            "专业": {
+                "description": "色调冷峻简洁，场景专业严谨，适合医学科普、健康知识等主题",
+                "visual_keywords": "冷色调、简洁专业、清晰明亮、蓝色系、白色背景、图表数据",
+                "atmosphere": "专业、严谨、科学、可信"
+            },
+            "活泼": {
+                "description": "色调明亮鲜艳，场景生动有趣，适合年轻人健身、活力养生等主题",
+                "visual_keywords": "明亮鲜艳、活力四射、动态感强、多色彩、橙色系、绿色系",
+                "atmosphere": "活泼、动感、活力、青春"
+            },
+            "简约": {
+                "description": "色调淡雅简约，场景干净清爽，适合中医养生、自然疗法等主题",
+                "visual_keywords": "淡雅简约、清新自然、米色系、浅灰色、留白、极简主义",
+                "atmosphere": "简约、清新、自然、舒适"
+            }
+        }
+
+        # 获取当前风格特征
+        style_info = style_features.get(video_style, style_features["温馨"])
+        style_desc = style_info["description"]
+        visual_keywords = style_info["visual_keywords"]
+        atmosphere = style_info["atmosphere"]
+
+        print(f"使用视频风格: {video_style}")
+        print(f"风格描述: {style_desc}")
 
         # 使用LLM执行完整的内容创作流程
         llm_client = LLMClient(ctx=ctx)
@@ -77,26 +111,32 @@ def generate_advanced_health_video(topic_data: str) -> str:
         script_prompt = f"""养生主题：{title}
 主题描述：{description}
 价值点：{json.dumps(value_points.get("value_points", []), ensure_ascii=False)}
+视频风格：{video_style}
+风格特征：{style_desc}
+视觉关键词：{visual_keywords}
+氛围感：{atmosphere}
 
 请根据以上信息，完成以下任务：
 1. 撰写养生文案（500-800字）
 2. 将文案拆解成7-10个场景
-3. 为每个场景生成分镜脚本，包含：
-   - 场景编号
-   - 场景描述（用于视频生成）
-   - 旁白文案
-   - 字幕内容
+3. 为每个场景生成分镜脚本，要求：
+   - 场景描述必须符合{video_style}风格，体现{atmosphere}的氛围
+   - 场景描述要包含{visual_keywords}等视觉元素
+   - 场景描述要详细、具体，适合AI视频生成
+   - 旁白文案要简洁有力，配合画面
+   - 字幕内容要突出核心信息
    - 时长（3-5秒）
 
 输出格式（必须是JSON格式）：
 {{
     "script": {{
         "title": "视频标题",
+        "style": "{video_style}",
         "total_duration": "总时长",
         "scenes": [
             {{
                 "scene_number": 1,
-                "scene_description": "场景描述，用于AI视频生成",
+                "scene_description": "场景描述，用于AI视频生成，要体现{video_style}风格",
                 "narration": "旁白文案",
                 "subtitle": "字幕内容",
                 "duration": 4
