@@ -14,10 +14,18 @@ from coze_coding_utils.runtime_ctx.context import default_headers
 from storage.memory.memory_saver import get_memory_saver
 
 # 导入工具
+# 选题来源工具
+from tools.topic_direct import topic_from_direct
+from tools.topic_from_inspiration import topic_from_inspiration
+from tools.topic_from_article import topic_from_article
+from tools.topic_from_video import topic_from_video
+from tools.health_trends_tool import fetch_health_trends
+from tools.topic_from_authority_health import topic_from_authority_health
+from tools.topic_from_tcm_classics import topic_from_tcm_classics
+from tools.topic_from_user_knowledge import topic_from_user_knowledge
 from tools.health_topic_tool import generate_health_topic
 from tools.health_video_tool import generate_health_video
 from tools.wechat_article_tool import generate_wechat_article
-from tools.health_trends_tool import fetch_health_trends
 from tools.advanced_video_tool import generate_advanced_health_video
 from tools.video_composite_tool import composite_health_video
 
@@ -62,10 +70,19 @@ def build_agent(ctx=None):
         model=llm,
         system_prompt=cfg.get("sp"),
         tools=[
+            # 选题来源工具（8种）
+            topic_from_direct,
+            topic_from_inspiration,
+            topic_from_article,
+            topic_from_video,
+            fetch_health_trends,
+            topic_from_authority_health,
+            topic_from_tcm_classics,
+            topic_from_user_knowledge,
+            # 视频和文章生成工具
             generate_health_topic,
             generate_health_video,
             generate_wechat_article,
-            fetch_health_trends,
             generate_advanced_health_video,
             composite_health_video
         ],
