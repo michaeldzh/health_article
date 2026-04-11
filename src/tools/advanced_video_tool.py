@@ -73,8 +73,15 @@ def generate_advanced_health_video(topic_data: str, video_style: str = "温馨")
         value_points_prompt = f"""养生主题：{title}
 主题描述：{description}
 关键词：{', '.join(keywords)}
+目标人群：中老年人（50岁以上）
 
-请从这个养生主题中提炼出3-5个对用户最有价值的健康要点。
+请从这个养生主题中提炼出3-5个对中老年人最有价值的健康要点。
+
+要求：
+1. 价值点要贴近中老年人的生活实际和健康需求
+2. 重点关注慢性病管理、日常保健、饮食调理等方面
+3. 解释要通俗易懂，避免专业术语
+4. 强调实用性和可操作性
 
 输出格式（必须是JSON格式）：
 {{
@@ -87,7 +94,7 @@ def generate_advanced_health_video(topic_data: str, video_style: str = "温馨")
 }}"""
 
         value_messages = [
-            SystemMessage(content="你是健康内容策划专家，擅长提炼养生主题的核心价值点。"),
+            SystemMessage(content="你是中老年健康内容策划专家，擅长提炼适合中老年人的养生主题核心价值点。"),
             HumanMessage(content=value_points_prompt)
         ]
 
@@ -115,16 +122,20 @@ def generate_advanced_health_video(topic_data: str, video_style: str = "温馨")
 风格特征：{style_desc}
 视觉关键词：{visual_keywords}
 氛围感：{atmosphere}
+目标人群：中老年人（50岁以上）
 
 请根据以上信息，完成以下任务：
-1. 撰写养生文案（500-800字）
+1. 撰写适合中老年人的养生文案（500-800字）
+   - 语言通俗易懂、接地气
+   - 避免专业术语，要有亲切感
+   - 内容贴近中老年人的生活实际
 2. 将文案拆解成7-10个场景
 3. 为每个场景生成分镜脚本，要求：
    - 场景描述必须符合{video_style}风格，体现{atmosphere}的氛围
    - 场景描述要包含{visual_keywords}等视觉元素
    - 场景描述要详细、具体，适合AI视频生成
-   - 旁白文案要简洁有力，配合画面
-   - 字幕内容要突出核心信息
+   - 旁白文案要简洁有力，配合画面，用词要亲切
+   - 字幕内容要突出核心信息，字体要大，便于阅读
    - 时长（3-5秒）
 
 输出格式（必须是JSON格式）：
@@ -146,7 +157,7 @@ def generate_advanced_health_video(topic_data: str, video_style: str = "温馨")
 }}"""
 
         script_messages = [
-            SystemMessage(content="你是专业视频脚本编剧，擅长创作养生健康类视频脚本。"),
+            SystemMessage(content="你是专业视频脚本编剧，擅长创作适合中老年人的养生健康类视频脚本。语言通俗易懂，贴近生活，避免专业术语。"),
             HumanMessage(content=script_prompt)
         ]
 

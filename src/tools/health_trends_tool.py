@@ -27,11 +27,11 @@ def fetch_health_trends(topic_keyword: str = "") -> str:
         # 搜索养生健康热点
         search_client = SearchClient(ctx=ctx)
 
-        # 构建搜索关键词
+        # 构建搜索关键词 - 明确针对中老年人
         if topic_keyword:
-            query = f"{topic_keyword} 养生 健康 热点"
+            query = f"{topic_keyword} 中老年人 养生 健康 热点"
         else:
-            query = "养生健康 热点 最新 2025"
+            query = "中老年人 养生健康 热点 最新 2025"
 
         # 执行搜索，获取最近一周的热点
         response = search_client.search(
@@ -64,13 +64,15 @@ def fetch_health_trends(topic_keyword: str = "") -> str:
         # 使用LLM分析热点并给出选题建议
         llm_client = LLMClient(ctx=ctx)
 
-        system_prompt = """你是一位专业的养生内容策划师，擅长从网络热点中挖掘有价值的养生选题。
+        system_prompt = """你是一位专业的中老年养生内容策划师，擅长从网络热点中挖掘适合中老年人的养生选题。
 
 请根据提供的热点列表，分析并给出选题建议。要求：
-1. 优先选择与养生健康相关的热点
-2. 选题要有实用性和传播性
-3. 给出3-5个选题建议
-4. 每个选题要说明推荐理由
+1. **目标人群**：必须是中老年人（50岁以上），内容要贴近他们的生活实际
+2. **选题方向**：慢性病管理、日常保健、饮食调理、运动养生、心理养生等
+3. **语言风格**：通俗易懂、接地气，避免专业术语，要有亲切感
+4. **实用性**：选择日常可操作、成本低的养生方法，避免过度养生
+5. 给出3-5个选题建议
+6. 每个选题要说明推荐理由
 
 输出格式（必须是JSON格式）：
 {
@@ -79,7 +81,7 @@ def fetch_health_trends(topic_keyword: str = "") -> str:
             "title": "选题标题",
             "reason": "推荐理由（50-100字）",
             "key_points": ["价值点1", "价值点2", "价值点3"],
-            "target_audience": "目标人群"
+            "target_audience": "目标人群（必须是中老年人或老年人群体）"
         }
     ]
 }"""
