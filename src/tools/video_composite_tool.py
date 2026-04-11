@@ -1,6 +1,7 @@
 """
 视频合成工具
 将多个分镜视频拼接成一个完整视频，并添加字幕和BGM
+适配 MoviePy 2.2.1 新 API
 """
 from langchain.tools import tool
 from coze_coding_utils.log.write_log import request_context
@@ -11,8 +12,15 @@ import tempfile
 from typing import List, Dict, Optional
 
 try:
-    # 使用稳定的 moviepy.editor 导入路径
-    from moviepy.editor import VideoFileClip, TextClip, CompositeVideoClip, AudioFileClip, concatenate_videoclips  # type: ignore
+    # MoviePy 2.2.1 新的导入方式
+    from moviepy import (
+        VideoFileClip,
+        TextClip,
+        CompositeVideoClip,
+        AudioFileClip,
+        CompositeAudioClip,
+        concatenate_videoclips
+    )
     MOVIEPY_AVAILABLE = True
 except ImportError:
     MOVIEPY_AVAILABLE = False
@@ -54,7 +62,6 @@ def composite_health_video(video_segments: str, bgm_url: str = "") -> str:
 
         # 下载所有视频片段
         video_clips = []
-        audio_clips = []
         subtitle_clips = []
 
         for i, segment in enumerate(segments):
@@ -74,13 +81,17 @@ def composite_health_video(video_segments: str, bgm_url: str = "") -> str:
 
                 # 加载视频片段
                 clip = VideoFileClip(video_path)
+
+                # MoviePy 2.2.1: 使用 with_section 或 with_end 来裁剪视频
                 if duration > 0 and clip.duration > duration:
-                    clip = clip.subclip(0, duration)
+                    clip = clip.with_end(duration)
+
                 video_clips.append(clip)
 
                 # 添加字幕
                 if subtitle_text:
                     try:
+                        # 尝试使用中文字体
                         txt_clip = TextClip(
                             subtitle_text,
                             fontsize=32,
@@ -90,10 +101,12 @@ def composite_health_video(video_segments: str, bgm_url: str = "") -> str:
                             stroke_width=2,
                             size=(clip.w * 0.9, None),
                             method='caption'
-                        ).set_position(('center', 'bottom')).set_duration(clip.duration)
+                        )
+                        # MoviePy 2.2.1: 使用 with_position 和 with_duration
+                        txt_clip = txt_clip.with_position(('center', 'bottom')).with_duration(clip.duration)
                         subtitle_clips.append(txt_clip)
                     except Exception as e:
-                        print(f"字幕生成失败: {str(e)}")
+                        print(f"中文字幕生成失败: {str(e)}")
                         # 如果中文字幕失败，尝试使用英文
                         try:
                             txt_clip = TextClip(
@@ -104,9 +117,11 @@ def composite_health_video(video_segments: str, bgm_url: str = "") -> str:
                                 stroke_width=2,
                                 size=(clip.w * 0.9, None),
                                 method='caption'
-                            ).set_position(('center', 'bottom')).set_duration(clip.duration)
+                            )
+                            txt_clip = txt_clip.with_position(('center', 'bottom')).with_duration(clip.duration)
                             subtitle_clips.append(txt_clip)
-                        except:
+                        except Exception as e2:
+                            print(f"字幕生成完全失败: {str(e2)}")
                             pass
 
                 print(f"场景 {i+1} 处理完成")
@@ -121,18 +136,19 @@ def composite_health_video(video_segments: str, bgm_url: str = "") -> str:
                 "error": "没有成功加载任何视频片段"
             }, ensure_ascii=False)
 
-        # 拼接视频
-        final_video = concatenate_videoclips(video_clips, method="compose")
-
-        # 添加字幕到视频上
-        if subtitle_clips:
-            # 确保字幕和视频片段一一对应
-            matched_subtitles = subtitle_clips[:len(video_clips)]
-            videos_with_subtitles = []
-            for video, subtitle in zip(video_clips, matched_subtitles):
-                composite = CompositeVideoClip([video, subtitle])
+        # 拼接视频 - MoviePy 2.2.1
+        # 先为每个视频片段添加对应的字幕
+        videos_with_subtitles = []
+        for i, video in enumerate(video_clips):
+            if i < len(subtitle_clips):
+                # MoviePy 2.2.1: 使用 CompositeVideoClip 直接合成
+                composite = CompositeVideoClip([video, subtitle_clips[i]])
                 videos_with_subtitles.append(composite)
-            final_video = concatenate_videoclips(videos_with_subtitles, method="compose")
+            else:
+                videos_with_subtitles.append(video)
+
+        # 拼接所有视频片段
+        final_video = concatenate_videoclips(videos_with_subtitles, method="compose")
 
         # 添加BGM
         if bgm_url:
@@ -145,24 +161,29 @@ def composite_health_video(video_segments: str, bgm_url: str = "") -> str:
                 with open(bgm_path, 'wb') as f:
                     f.write(bgm_response.content)
 
-                # 加载BGM并调整长度
+                # 加载BGM并调整长度 - MoviePy 2.2.1
                 bgm = AudioFileClip(bgm_path)
                 if bgm.duration > final_video.duration:
-                    bgm = bgm.subclip(0, final_video.duration)
+                    bgm = bgm.with_end(final_video.duration)
                 elif bgm.duration < final_video.duration:
-                    # 循环BGM
-                    bgm = bgm.loop(duration=final_video.duration)
+                    # 手动循环BGM - 计算需要循环的次数
+                    loops_needed = int(final_video.duration / bgm.duration) + 1
+                    # 创建多个BGM副本并拼接
+                    bgm_clips = [bgm] * loops_needed
+                    from moviepy import concatenate_audioclips
+                    bgm = concatenate_audioclips(bgm_clips).with_end(final_video.duration)
 
-                # 降低BGM音量，不影响旁白
-                bgm = bgm.volumex(0.3)
+                # 降低BGM音量 - MoviePy 2.2.1 使用 with_volume_scaled
+                bgm = bgm.with_volume_scaled(0.3)
 
                 # 如果原视频有音频，混合音频
                 if final_video.audio:
                     final_audio = final_video.audio
-                    mixed_audio = final_audio.overlay(bgm)
-                    final_video = final_video.set_audio(mixed_audio)
+                    # MoviePy 2.2.1: 使用 CompositeAudioClip
+                    mixed_audio = CompositeAudioClip([final_audio, bgm])
+                    final_video = final_video.with_audio(mixed_audio)
                 else:
-                    final_video = final_video.set_audio(bgm)
+                    final_video = final_video.with_audio(bgm)
 
                 print("BGM添加完成")
 
@@ -171,13 +192,21 @@ def composite_health_video(video_segments: str, bgm_url: str = "") -> str:
 
         # 输出视频到临时文件
         output_path = os.path.join(temp_dir, "final_video.mp4")
-        final_video.write_videofile(
+
+        # MoviePy 2.2.1: write_videofile 方法参数可能不同
+        # 设置 fps - MoviePy 2.2.1 使用 with_fps 方法
+        final_video = final_video.with_fps(24)
+
+        # 获取视频信息
+        video_duration = getattr(final_video, 'duration', 0)
+        video_w = getattr(final_video, 'w', 0)
+        video_h = getattr(final_video, 'h', 0)
+
+        # 写入视频文件
+        final_video.write_videofile(  # type: ignore
             output_path,
             codec='libx264',
             audio_codec='aac',
-            temp_audiofile=os.path.join(temp_dir, "temp_audio.m4a"),
-            remove_temp=True,
-            fps=24,
             verbose=False,
             logger=None
         )
@@ -197,12 +226,11 @@ def composite_health_video(video_segments: str, bgm_url: str = "") -> str:
             "success": True,
             "data": {
                 "video_path": output_path,
-                "duration": final_video.duration,
-                "fps": final_video.fps,
-                "resolution": f"{int(final_video.w)}x{int(final_video.h)}",
+                "duration": video_duration,
+                "resolution": f"{int(video_w)}x{int(video_h)}",
                 "segments_count": len(segments)
             },
-            "message": f"成功合成视频，总时长：{final_video.duration:.2f}秒"
+            "message": f"成功合成视频，总时长：{video_duration:.2f}秒"
         }, ensure_ascii=False)
 
     except json.JSONDecodeError as e:
