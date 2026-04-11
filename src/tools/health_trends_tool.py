@@ -24,6 +24,16 @@ def fetch_health_trends(topic_keyword: str = "") -> str:
     ctx = request_context.get() or new_context(method="fetch_health_trends")
 
     try:
+        # 定义多渠道搜索列表
+        channels = {
+            "综合搜索": None,  # 不限制网站，全网搜索
+            "权威官方": "nhc.gov.cn,chinacdc.cn,people.com.cn,xinhuanet.com",
+            "主流媒体": "sohu.com,sina.com.cn,qq.com,163.com,ifeng.com",
+            "专业健康": "39.net,99.com.cn,ydyy.cn,jkzx.cn",
+            "社交平台": "weibo.com,zhihu.com",
+            "生活方式": "xiaohongshu.com,bilibili.com"
+        }
+
         # 搜索养生健康热点
         search_client = SearchClient(ctx=ctx)
 
@@ -33,46 +43,78 @@ def fetch_health_trends(topic_keyword: str = "") -> str:
         else:
             query = "中老年人 养生健康 热点 最新 2025"
 
-        # 执行搜索，获取最近一周的热点
-        response = search_client.search(
-            query=query,
-            search_type="web",
-            count=10,
-            need_summary=True,
-            time_range="1w"
-        )
+        # 执行多渠道搜索
+        all_trends = []
+        channel_results = {}
 
-        if not response.web_items:
+        for channel_name, sites in channels.items():
+            try:
+                search_params = {
+                    "query": query,
+                    "search_type": "web",
+                    "count": 8,
+                    "need_summary": True,
+                    "time_range": "1w"
+                }
+                
+                # 如果指定了网站，添加 sites 参数
+                if sites:
+                    search_params["sites"] = sites
+
+                response = search_client.search(**search_params)
+
+                if response.web_items:
+                    channel_trends = []
+                    for item in response.web_items:
+                        trend = {
+                            "content": item.title,
+                            "author": item.site_name,
+                            "description": item.snippet,
+                            "url": item.url,
+                            "publish_time": item.publish_time,
+                            "rank_score": item.rank_score,
+                            "channel": channel_name,
+                            "auth_level": getattr(item, 'auth_info_level', None)
+                        }
+                        channel_trends.append(trend)
+                        all_trends.append(trend)
+
+                    channel_results[channel_name] = channel_trends
+                    print(f"{channel_name}: 找到 {len(channel_trends)} 条热点")
+            except Exception as e:
+                print(f"{channel_name} 渠道搜索失败: {str(e)}")
+                # 如果是综合搜索失败，则直接跳过
+                if channel_name == "综合搜索":
+                    continue
+                # 其他渠道失败，继续尝试其他渠道
+                continue
+
+        # 如果没有搜索到任何热点
+        if not all_trends:
             return json.dumps({
                 "success": False,
                 "error": "未找到相关热点内容"
             }, ensure_ascii=False)
 
-        # 整理热点信息
-        trends = []
-        for item in response.web_items:
-            trend = {
-                "content": item.title,
-                "author": item.site_name,
-                "description": item.snippet,
-                "url": item.url,
-                "publish_time": item.publish_time,
-                "rank_score": item.rank_score
-            }
-            trends.append(trend)
+        # 按热度排序
+        all_trends.sort(key=lambda x: x.get('rank_score', 0), reverse=True)
+
+        # 取前15个热点
+        top_trends = all_trends[:15]
 
         # 使用LLM分析热点并给出选题建议
         llm_client = LLMClient(ctx=ctx)
 
-        system_prompt = """你是一位专业的中老年养生内容策划师，擅长从网络热点中挖掘适合中老年人的养生选题。
+        system_prompt = """你是一位专业的中老年养生内容策划师，擅长从多渠道网络热点中挖掘适合中老年人的养生选题。
 
 请根据提供的热点列表，分析并给出选题建议。要求：
 1. **目标人群**：必须是中老年人（50岁以上），内容要贴近他们的生活实际
 2. **选题方向**：慢性病管理、日常保健、饮食调理、运动养生、心理养生等
 3. **语言风格**：通俗易懂、接地气，避免专业术语，要有亲切感
 4. **实用性**：选择日常可操作、成本低的养生方法，避免过度养生
-5. 给出3-5个选题建议
-6. 每个选题要说明推荐理由
+5. **时效性**：优先选择近期热点和热议话题
+6. 给出3-5个选题建议
+7. 每个选题要说明推荐理由和热点来源渠道
 
 输出格式（必须是JSON格式）：
 {
@@ -81,19 +123,30 @@ def fetch_health_trends(topic_keyword: str = "") -> str:
             "title": "选题标题",
             "reason": "推荐理由（50-100字）",
             "key_points": ["价值点1", "价值点2", "价值点3"],
-            "target_audience": "目标人群（必须是中老年人或老年人群体）"
+            "target_audience": "目标人群（必须是中老年人或老年人群体）",
+            "source_channels": ["来源渠道1", "来源渠道2"]
         }
     ]
 }"""
 
         # 构建热点描述文本
         trends_text = "\n".join([
-            f"{i+1}. 标题：{t['content']}\n   来源：{t['author']}\n   描述：{t['description'][:100]}...\n   时间：{t.get('publish_time', '未知')}\n"
-            for i, t in enumerate(trends[:8])
+            f"{i+1}. 标题：{t['content']}\n   来源：{t['author']}\n   渠道：{t.get('channel', '未知')}\n   描述：{t['description'][:100]}...\n   时间：{t.get('publish_time', '未知')}\n   热度：{t.get('rank_score', 0)}\n"
+            for i, t in enumerate(top_trends[:10])
         ])
 
-        user_message = f"""以下是从网络抓取的养生健康热点：
+        # 添加渠道统计信息
+        channel_summary = "\n".join([
+            f"- {channel}: {len(results)} 条热点"
+            for channel, results in channel_results.items()
+        ])
 
+        user_message = f"""以下是从多渠道抓取的养生健康热点：
+
+📊 渠道统计：
+{channel_summary}
+
+🔥 热点列表：
 {trends_text}
 
 请根据这些热点，给出3-5个适合制作养生视频的选题建议。"""
@@ -124,11 +177,12 @@ def fetch_health_trends(topic_keyword: str = "") -> str:
         return json.dumps({
             "success": True,
             "data": {
-                "trends": trends,
+                "trends": top_trends,
                 "suggestions": suggestions.get("topic_suggestions", []),
-                "total_trends": len(trends)
+                "total_trends": len(top_trends),
+                "channel_results": channel_results
             },
-            "message": f"成功抓取{len(trends)}个热点，并给出{suggestions.get('topic_suggestions', len([]))}个选题建议"
+            "message": f"成功从多渠道抓取{len(top_trends)}个热点，并给出{suggestions.get('topic_suggestions', len([]))}个选题建议"
         }, ensure_ascii=False)
 
     except json.JSONDecodeError as e:
