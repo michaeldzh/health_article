@@ -11,6 +11,7 @@ import tempfile
 from typing import List, Dict, Optional
 
 try:
+    # 使用稳定的 moviepy.editor 导入路径
     from moviepy.editor import VideoFileClip, TextClip, CompositeVideoClip, AudioFileClip, concatenate_videoclips  # type: ignore
     MOVIEPY_AVAILABLE = True
 except ImportError:
