@@ -911,6 +911,15 @@ wheels = [
 ]
 
 [[package]]
+name = "lunardate"
+version = "0.2.2"
+source = { registry = "https://mirrors.aliyun.com/pypi/simple/" }
+sdist = { url = "https://mirrors.aliyun.com/pypi/packages/85/71/62fadf243502618cf2a7af5b81936a99684147c655729934f014758c3b39/lunardate-0.2.2.tar.gz", hash = "sha256:8ff8c01721bef7710f0712a302b1cb7d0b8b3ffc72a63a9a056cd01e58e5485a" }
+wheels = [
+    { url = "https://mirrors.aliyun.com/pypi/packages/a3/07/232401bb1c6bc699c5e641ad375e2582cdde90b19b18e6618ec51796b737/lunardate-0.2.2-py3-none-any.whl", hash = "sha256:cf1916337e50470a82df12d885ff47a456e89c91a3ad4e5fdf1575e063a7ed55" },
+]
+
+[[package]]
 name = "lxml"
 version = "6.0.2"
 source = { registry = "https://mirrors.aliyun.com/pypi/simple/" }
@@ -2745,6 +2754,7 @@ dependencies = [
     { name = "langgraph-prebuilt" },
     { name = "langgraph-sdk" },
     { name = "langsmith" },
+    { name = "lunardate" },
     { name = "moviepy" },
     { name = "opencv-python" },
     { name = "openpyxl" },
@@ -2762,6 +2772,7 @@ dependencies = [
     { name = "rich" },
     { name = "sqlalchemy" },
     { name = "uvicorn" },
+    { name = "zhdate" },
 ]
 
 [package.metadata]
@@ -2786,6 +2797,7 @@ requires-dist = [
     { name = "langgraph-prebuilt", specifier = "==1.0.2" },
     { name = "langgraph-sdk", specifier = "==0.2.9" },
     { name = "langsmith", specifier = "==0.4.39" },
+    { name = "lunardate", specifier = ">=0.2.2" },
     { name = "moviepy", specifier = ">=2.2.1" },
     { name = "opencv-python", specifier = ">=4.12,<5" },
     { name = "openpyxl", specifier = ">=3.1,<4" },
@@ -2803,6 +2815,7 @@ requires-dist = [
     { name = "rich", specifier = ">=14,<15" },
     { name = "sqlalchemy", specifier = ">=2.0,<3" },
     { name = "uvicorn", specifier = ">=0.38,<1" },
+    { name = "zhdate", specifier = ">=0.1" },
 ]
 
 [[package]]
@@ -3030,6 +3043,15 @@ wheels = [
     { url = "https://mirrors.aliyun.com/pypi/packages/e1/19/3774d162f6732d1cfb0b47b4140a942a35ca82bb19b6db1f80e9e7bdc8f8/yarl-1.23.0-cp314-cp314t-win_amd64.whl", hash = "sha256:4503053d296bc6e4cbd1fad61cf3b6e33b939886c4f249ba7c78b602214fabe2" },
     { url = "https://mirrors.aliyun.com/pypi/packages/51/47/3fa2286c3cb162c71cdb34c4224d5745a1ceceb391b2bd9b19b668a8d724/yarl-1.23.0-cp314-cp314t-win_arm64.whl", hash = "sha256:44bb7bef4ea409384e3f8bc36c063d77ea1b8d4a5b2706956c0d6695f07dcc25" },
     { url = "https://mirrors.aliyun.com/pypi/packages/69/68/c8739671f5699c7dc470580a4f821ef37c32c4cb0b047ce223a7f115757f/yarl-1.23.0-py3-none-any.whl", hash = "sha256:a2df6afe50dea8ae15fa34c9f824a3ee958d785fd5d089063d960bae1daa0a3f" },
+]
+
+[[package]]
+name = "zhdate"
+version = "0.1"
+source = { registry = "https://mirrors.aliyun.com/pypi/simple/" }
+sdist = { url = "https://mirrors.aliyun.com/pypi/packages/67/64/7ba359eab7f61a4852a5125da723544a99d27d37d89b0e3608177195a1cb/zhdate-0.1.tar.gz", hash = "sha256:cf54c07a9a9a027db3a970f7477b7eb7962a0fc0d5f5d5d284a76e953e68993c" }
+wheels = [
+    { url = "https://mirrors.aliyun.com/pypi/packages/e5/5e/5ddf769b1ca31d1e997b94a390279da6892c99702593c1feedb93a70f508/zhdate-0.1-py3-none-any.whl", hash = "sha256:d003657bf49d6722c4c3adcb9a91722f6de1077bf3be0e54c0f4492b5e028fa4" },
 ]
 
 [[package]]
