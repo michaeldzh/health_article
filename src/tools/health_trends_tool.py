@@ -662,10 +662,10 @@ def fetch_health_trends(
 
         # 自定义JSON序列化器，处理 date/datetime 等特殊类型
         class DateEncoder(json.JSONEncoder):
-            def default(self, obj):
-                if isinstance(obj, (date, datetime)):
-                    return obj.isoformat()
-                return super().default(obj)
+            def default(self, o):  # noqa: A003
+                if isinstance(o, (date, datetime)):
+                    return o.isoformat()
+                return super().default(o)
 
         result_data = {
             "seasonal_report": format_seasonal_report(seasonal_info),
