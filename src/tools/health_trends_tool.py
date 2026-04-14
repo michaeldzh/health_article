@@ -659,10 +659,18 @@ def fetch_health_trends(
         # ========================================
         # 8. 构建返回结果
         # ========================================
+
+        # 自定义JSON序列化器，处理 date/datetime 等特殊类型
+        class DateEncoder(json.JSONEncoder):
+            def default(self, obj):
+                if isinstance(obj, (date, datetime)):
+                    return obj.isoformat()
+                return super().default(obj)
+
         result_data = {
             "seasonal_report": format_seasonal_report(seasonal_info),
             "seasonal_detail": {
-                "date": seasonal_info["date_info"]["solar_date"],
+                "date": str(seasonal_info["date_info"].get("solar_date", "")),
                 "season": current_season,
                 "solar_term": current_solar_term_name,
                 "days_into_term": days_into_term,
@@ -685,7 +693,7 @@ def fetch_health_trends(
                     "foods": regional.get("recommended_foods", []),
                     "notes": regional.get("special_notes", [])
                 },
-                "health_themes": seasonal_info["seasonal_health_themes"]
+                "health_themes": seasonal_info.get("seasonal_health_themes", [])
             },
             "time_filter_stats": {
                 "total_fetched": len(all_trends),
@@ -694,7 +702,7 @@ def fetch_health_trends(
                 "filter_criteria": "最近7天内发布，排除往年旧文"
             },
             "trends_summary": trends_with_value,
-            "suggestions": suggestions.get("topic_suggestions", []),
+            "suggestions": suggestions.get("topic_suggestions", []) if suggestions else [],
             "channel_results": channel_results,
             "has_detailed_content": detailed_count > 0,
             "detailed_count": detailed_count
@@ -713,7 +721,7 @@ def fetch_health_trends(
             "success": True,
             "data": result_data,
             "message": "".join(message_parts)
-        }, ensure_ascii=False)
+        }, ensure_ascii=False, cls=DateEncoder)
 
     except json.JSONDecodeError as e:
         return json.dumps({
