@@ -19,7 +19,7 @@ import os
 # 微信公众号发布API配置
 WECHAT_PUBLISH_API_URL = os.getenv("WECHAT_PUBLISH_API_URL", "https://wx.limyai.com/api/openapi/wechat-publish")
 WECHAT_PUBLISH_API_KEY = os.getenv("WECHAT_PUBLISH_API_KEY", "xhs_f70d4b039202bc90ece469827abfe401")
-WECHAT_APP_ID = os.getenv("WECHAT_APP_ID", "")  # 微信公众号AppID
+WECHAT_APP_ID = os.getenv("WECHAT_APP_ID", "wx74a41209f8b880eb")  # 微信公众号AppID
 
 
 @tool
