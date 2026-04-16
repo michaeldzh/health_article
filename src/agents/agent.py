@@ -29,7 +29,7 @@ from tools.wechat_article_tool import generate_wechat_article
 from tools.advanced_video_tool import generate_advanced_health_video
 from tools.video_composite_tool import composite_health_video
 # 微信公众号推送工具
-from tools.wechat_publish_tool import publish_to_wechat_draft, quick_publish_article
+from tools.wechat_publish_tool import publish_to_wechat_draft, quick_publish_article, publish_article_with_images, generate_and_publish_full
 
 LLM_CONFIG = "config/agent_llm_config.json"
 
@@ -89,7 +89,9 @@ def build_agent(ctx=None):
             composite_health_video,
             # 微信公众号推送工具
             publish_to_wechat_draft,
-            quick_publish_article
+            quick_publish_article,
+            publish_article_with_images,
+            generate_and_publish_full
         ],
         checkpointer=get_memory_saver(),
         state_schema=AgentState,

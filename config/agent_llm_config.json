@@ -27,6 +27,8 @@
         "generate_advanced_health_video",
         "composite_health_video",
         "publish_to_wechat_draft",
-        "quick_publish_article"
+        "quick_publish_article",
+        "publish_article_with_images",
+        "generate_and_publish_full"
     ]
 }
